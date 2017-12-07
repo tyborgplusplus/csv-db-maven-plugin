@@ -57,12 +57,12 @@ public class DbWriter {
             deleteStatement.executeUpdate("DELETE FROM " + tableName);
             deleteStatement.close();
 
-            Map<String, Integer> columnTypeByName = this.determineColumns(tableName, connection);
+            Map<String, Integer> columnTypeByName = this.determineColumnTypes(tableName, connection);
 
             for (int rowIndex = 0; rowIndex < this.getRowCount(entry.getValue()); rowIndex++) {
                 String insertSql = DbWriter.INSERT_SQL.replace("$table", tableName);
 
-                List<String> filledColumns = this.determineFilledColums(entry.getValue(), rowIndex);
+                List<String> filledColumns = this.determineFilledColumns(entry.getValue(), rowIndex);
                 if (filledColumns.isEmpty()) {
                     // row is empty
                     continue;
@@ -120,7 +120,7 @@ public class DbWriter {
         connection.close();
     }
 
-    private Map<String, Integer> determineColumns(final String tableName, final Connection connection)
+    private Map<String, Integer> determineColumnTypes(final String tableName, final Connection connection)
             throws SQLException {
         Map<String, Integer> columnTypeByName = new HashMap<>();
 
@@ -149,11 +149,12 @@ public class DbWriter {
             return 0;
         } else {
             List<String> columns = new ArrayList<>(data.getDataByColumnName().keySet());
+            // every column has the same count of rows
             return data.getDataByColumnName().get(columns.get(0)).size();
         }
     }
 
-    private List<String> determineFilledColums(final TableData tableData, final int rowIndex) {
+    private List<String> determineFilledColumns(final TableData tableData, final int rowIndex) {
         List<String> filledColumns = new ArrayList<>();
 
         for (Map.Entry<String, List<String>> entry : tableData.getDataByColumnName().entrySet()) {
