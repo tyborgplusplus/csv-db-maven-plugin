@@ -1,5 +1,7 @@
 package eu.malanik.setting.db;
 
+import eu.malanik.setting.TableData;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -16,8 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import eu.malanik.setting.TableData;
 
 public class DbWriter {
 
@@ -76,36 +76,41 @@ public class DbWriter {
 
                 PreparedStatement statement = connection.prepareStatement(insertSql);
 
-                for (int parameterIndex = 0; parameterIndex < columnNames.size(); parameterIndex++) {
-                    String columnName = columnNames.get(parameterIndex);
+                int parameterIndex = 0;
+                for (int columnNameIndex = 0; columnNameIndex < columnNames.size(); columnNameIndex++) {
+                    String columnName = columnNames.get(columnNameIndex);
                     if (!filledColumns.contains(columnName)) {
                         // column name null in this row
                         continue;
                     }
+                    parameterIndex++;
                     List<String> columnValues = entry.getValue().getDataByColumnName().get(columnName);
                     String value = columnValues.get(rowIndex);
                     int columnType = columnTypeByName.get(columnName);
                     switch(columnType) {
                         case Types.VARCHAR:
                         case Types.CHAR:
-                            statement.setString((parameterIndex + 1), value);
+                            statement.setString(parameterIndex, value);
                             break;
                         case Types.DOUBLE:
-                            statement.setDouble((parameterIndex + 1), Double.valueOf(value));
+                            statement.setDouble(parameterIndex, Double.valueOf(value));
                             break;
                         case Types.INTEGER:
-                            statement.setInt((parameterIndex + 1), Integer.valueOf(value));
+                            statement.setInt(parameterIndex, Integer.valueOf(value));
+                            break;
+                        case Types.BIGINT:
+                            statement.setLong(parameterIndex, Long.valueOf(value));
                             break;
                         case Types.BOOLEAN:
-                            statement.setBoolean((parameterIndex + 1), Boolean.valueOf(value));
+                            statement.setBoolean(parameterIndex, Boolean.valueOf(value));
                             break;
                         case Types.DATE:
                             java.util.Date date = new SimpleDateFormat(dateFormat).parse(value);
-                            statement.setDate((parameterIndex + 1), new Date(date.getTime()));
+                            statement.setDate(parameterIndex, new Date(date.getTime()));
                             break;
                         case Types.TIMESTAMP:
                             java.util.Date timestamp = new SimpleDateFormat(timestampFormat).parse(value);
-                            statement.setTimestamp((parameterIndex + 1), new Timestamp(timestamp.getTime()));
+                            statement.setTimestamp(parameterIndex, new Timestamp(timestamp.getTime()));
                             break;
                         default:
                             throw new IllegalAccessException(
