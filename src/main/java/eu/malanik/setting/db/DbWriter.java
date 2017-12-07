@@ -23,10 +23,6 @@ public class DbWriter {
 
     private static final String INSERT_SQL = "INSERT INTO $table ($columns) VALUES ($values)";
 
-    private String defaultDateFormat = "dd.MM.yyyy";
-
-    private String defaultTimestampFormat = "dd.MM.yyyy HH:mm:ss";
-
     private String url;
 
     private String user;
@@ -45,7 +41,8 @@ public class DbWriter {
         this.schema = schema;
     }
 
-    public void writeToDb(Map<String, TableData> data) throws Exception {
+    public void writeToDb(Map<String, TableData> data, final String dateFormat, final String timestampFormat)
+            throws Exception {
         Connection connection = this.createConnection();
 
         if (this.schema != null) {
@@ -103,11 +100,11 @@ public class DbWriter {
                             statement.setBoolean((parameterIndex + 1), Boolean.valueOf(value));
                             break;
                         case Types.DATE:
-                            java.util.Date date = new SimpleDateFormat(defaultDateFormat).parse(value);
+                            java.util.Date date = new SimpleDateFormat(dateFormat).parse(value);
                             statement.setDate((parameterIndex + 1), new Date(date.getTime()));
                             break;
                         case Types.TIMESTAMP:
-                            java.util.Date timestamp = new SimpleDateFormat(defaultTimestampFormat).parse(value);
+                            java.util.Date timestamp = new SimpleDateFormat(timestampFormat).parse(value);
                             statement.setTimestamp((parameterIndex + 1), new Timestamp(timestamp.getTime()));
                             break;
                         default:

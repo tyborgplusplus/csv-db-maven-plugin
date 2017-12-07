@@ -1,5 +1,10 @@
 package eu.malanik.setting;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import eu.malanik.setting.csv.CsvReader;
 import eu.malanik.setting.db.DbWriter;
 import org.apache.maven.plugin.AbstractMojo;
@@ -7,16 +12,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 @Mojo(name = "import")
 public class ImportMojo extends AbstractMojo {
 
     @Parameter(property = "csvDirectory", required = true)
     private File csvDirectory;
+
+    @Parameter(property = "dateFormat", defaultValue = "dd.MM.yyyy")
+    private String dateFormat;
+
+    @Parameter(property = "timestampFormat", defaultValue = "dd.MM.yyyy HH:mm:ss")
+    private String timestampFormat;
 
     @Parameter(property = "dbUrl", required = true)
     private String dbUrl;
@@ -59,7 +65,7 @@ public class ImportMojo extends AbstractMojo {
         getLog().info("Importing settings to database " + this.dbUrl);
         DbWriter dbWriter = new DbWriter(this.dbUrl, this.dbUser, this.dbPassword, this.dbDriver, this.dbSchema);
         try {
-            dbWriter.writeToDb(data);
+            dbWriter.writeToDb(data, this.dateFormat, this.timestampFormat);
             getLog().info("Setting successfully imported.");
         } catch (Exception ex) {
             getLog().error(ex);

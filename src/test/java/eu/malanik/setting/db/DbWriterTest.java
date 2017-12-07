@@ -32,6 +32,10 @@ public class DbWriterTest {
 
     private static final String DB_PASSWORD = "";
 
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
+
+    private static final String TIMESTAMP_FORMAT = "dd.MM.yyyy HH:mm:ss";
+
     private Connection connection = null;
 
     @Before
@@ -75,7 +79,7 @@ public class DbWriterTest {
         tableData.getDataByColumnName().put("timestamp", timestamps);
         data.put("setting", tableData);
 
-        underTest.writeToDb(data);
+        underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
 
         try {
             Statement statement = connection.createStatement();
@@ -92,11 +96,11 @@ public class DbWriterTest {
 
                 assertEquals(Boolean.TRUE, resultSet.getBoolean("boolean"));
 
-                assertEquals(LocalDate.parse("12.05.2017", DateTimeFormatter.ofPattern("dd.MM.yyy")),
+                assertEquals(LocalDate.parse("12.05.2017", DateTimeFormatter.ofPattern(DATE_FORMAT)),
                         resultSet.getDate("date").toLocalDate());
 
                 assertEquals(
-                        LocalDateTime.parse("01.07.2009 19:23:55", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+                        LocalDateTime.parse("01.07.2009 19:23:55", DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT)),
                         resultSet.getTimestamp("timestamp").toLocalDateTime());
             }
             assertEquals(1, resultSetSize);
@@ -124,7 +128,7 @@ public class DbWriterTest {
         tableData.getDataByColumnName().put("timestamp", new ArrayList<>());
         data.put("setting", tableData);
 
-        underTest.writeToDb(data);
+        underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
 
         try {
             Statement statement = connection.createStatement();
@@ -153,7 +157,7 @@ public class DbWriterTest {
         TableData tableData = new TableData();
         data.put("setting", tableData);
 
-        underTest.writeToDb(data);
+        underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
 
         try {
             Statement statement = connection.createStatement();
@@ -173,7 +177,6 @@ public class DbWriterTest {
         }
 
     }
-
 
 
 }
