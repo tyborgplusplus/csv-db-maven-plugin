@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class TableData {
 
-    private Map<String, List<String>> dataByColumnName = new HashMap();
+    private Map<String, List<String>> dataByColumnName = new HashMap<>();
 
     public Map<String, List<String>> getDataByColumnName() {
         return dataByColumnName;

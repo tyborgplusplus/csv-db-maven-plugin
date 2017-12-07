@@ -1,10 +1,5 @@
 package eu.malanik.setting.csv;
 
-import eu.malanik.setting.TableData;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,6 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import eu.malanik.setting.TableData;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 public class CsvReader {
 
@@ -48,14 +48,13 @@ public class CsvReader {
             Set<String> columns = ((CSVParser) records).getHeaderMap().keySet();
             for (String columnName : columns) {
                 if (!tableData.getDataByColumnName().containsKey(columnName)) {
-                    tableData.getDataByColumnName().put(columnName, new ArrayList<>());
+                    tableData.getDataByColumnName().put(columnName.toLowerCase(), new ArrayList<>());
                 }
             }
 
             for (CSVRecord record : records) {
                 for (String column : columns) {
                     List<String> values = tableData.getDataByColumnName().get(column);
-
                     String value = record.get(column);
                     values.add(value);
                 }
