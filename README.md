@@ -3,7 +3,7 @@ csv-db-maven-plugin
 
 The csv-db-maven-plugin simplifies maintenance of configuration data in applications. 
 It collects the data from csv files and imports this data to database tables. 
-Whole system configuration could be summarized in*one*csv file 
+Whole system configuration could be summarized in one csv file 
 or clustered by e.g. environment (development, test, ..). 
 CSV as source format enables sorting and comparing files and is easy to maintain in table editors.   
 
@@ -38,7 +38,7 @@ Configuration
 | dbUrl  | yes  | | Connection to target database   | 
 | dbUser  | yes  |  | The user for database connection |
 | dbPassword  | yes  |  | The password for database connection |
-| dbDriver  | no  | org.postgresql.Driver  | Content Cell  |
+| dbDriver  | no  | org.postgresql.Driver  | JDBC driver class for database connection  |
 | dbSchema  | no  |  | Database schema to use |
 | dateFormat  | no  | dd.MM.yyyy  | Format for date values  |
 | timestampFormat  | no | dd.MM.yyyy HH:mm:ss  | Format for timestamp values  |
