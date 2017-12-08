@@ -86,7 +86,10 @@ public class DbWriter {
                     parameterIndex++;
                     List<String> columnValues = entry.getValue().getDataByColumnName().get(columnName);
                     String value = columnValues.get(rowIndex);
-                    int columnType = columnTypeByName.get(columnName);
+                    Integer columnType = columnTypeByName.get(columnName);
+                    if (columnType == null) {
+                        throw new IllegalArgumentException("Column " + columnName + " does not exists in table " + tableName);
+                    }
                     switch(columnType) {
                         case Types.VARCHAR:
                         case Types.CHAR:
