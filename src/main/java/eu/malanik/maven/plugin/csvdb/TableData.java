@@ -1,4 +1,4 @@
-package eu.malanik.setting;
+package eu.malanik.maven.plugin.csvdb;
 
 import java.util.HashMap;
 import java.util.List;

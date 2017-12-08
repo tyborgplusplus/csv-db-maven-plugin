@@ -1,6 +1,6 @@
-package eu.malanik.setting.db;
+package eu.malanik.maven.plugin.csvdb.db;
 
-import eu.malanik.setting.TableData;
+import eu.malanik.maven.plugin.csvdb.TableData;
 
 import java.sql.Connection;
 import java.sql.Date;

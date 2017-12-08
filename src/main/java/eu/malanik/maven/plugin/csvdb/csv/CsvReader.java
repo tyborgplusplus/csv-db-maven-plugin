@@ -1,4 +1,9 @@
-package eu.malanik.setting.csv;
+package eu.malanik.maven.plugin.csvdb.csv;
+
+import eu.malanik.maven.plugin.csvdb.TableData;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 import java.io.File;
 import java.io.FileReader;
@@ -9,11 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import eu.malanik.setting.TableData;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 public class CsvReader {
 

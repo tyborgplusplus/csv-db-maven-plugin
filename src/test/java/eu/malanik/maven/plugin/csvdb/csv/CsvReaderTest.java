@@ -1,6 +1,6 @@
-package eu.malanik.setting.csv;
+package eu.malanik.maven.plugin.csvdb.csv;
 
-import eu.malanik.setting.TableData;
+import eu.malanik.maven.plugin.csvdb.TableData;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;

@@ -1,6 +1,6 @@
-package eu.malanik.setting;
+package eu.malanik.maven.plugin.csvdb;
 
-import eu.malanik.setting.csv.CsvReader;
+import eu.malanik.maven.plugin.csvdb.csv.CsvReader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;

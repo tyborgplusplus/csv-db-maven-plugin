@@ -1,6 +1,6 @@
-package eu.malanik.setting.db;
+package eu.malanik.maven.plugin.csvdb.db;
 
-import eu.malanik.setting.TableData;
+import eu.malanik.maven.plugin.csvdb.TableData;
 import org.h2.util.IOUtils;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -25,7 +25,7 @@ public class DbWriterTest {
 
     private static final String DRIVER_CLASS = "org.h2.Driver";
 
-    private static final String DB_URL = "jdbc:h2:./target/DbWriterTest:TRACE_LEVEL_FILE=2;TRACE_LEVEL_SYSTEM_OUT=2";
+    private static final String DB_URL = "jdbc:h2:./target/DbWriterTest;TRACE_LEVEL_SYSTEM_OUT=2";
 
     private static final String DB_USER = "sa";
 

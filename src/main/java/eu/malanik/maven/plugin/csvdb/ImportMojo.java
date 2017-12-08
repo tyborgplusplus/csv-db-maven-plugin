@@ -1,16 +1,16 @@
-package eu.malanik.setting;
+package eu.malanik.maven.plugin.csvdb;
+
+import eu.malanik.maven.plugin.csvdb.csv.CsvReader;
+import eu.malanik.maven.plugin.csvdb.db.DbWriter;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import eu.malanik.setting.csv.CsvReader;
-import eu.malanik.setting.db.DbWriter;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(name = "import")
 public class ImportMojo extends AbstractMojo {
