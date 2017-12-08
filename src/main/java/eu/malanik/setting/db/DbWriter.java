@@ -105,11 +105,21 @@ public class DbWriter {
                             statement.setBoolean(parameterIndex, Boolean.valueOf(value));
                             break;
                         case Types.DATE:
-                            java.util.Date date = new SimpleDateFormat(dateFormat).parse(value);
+                            java.util.Date date;
+                            if ("now".equals(value)) {
+                                date = new java.util.Date();
+                            } else {
+                                date = new SimpleDateFormat(dateFormat).parse(value);
+                            }
                             statement.setDate(parameterIndex, new Date(date.getTime()));
                             break;
                         case Types.TIMESTAMP:
-                            java.util.Date timestamp = new SimpleDateFormat(timestampFormat).parse(value);
+                            java.util.Date timestamp;
+                            if ("now".equals(value)) {
+                                timestamp = new java.util.Date();
+                            } else {
+                                timestamp = new SimpleDateFormat(timestampFormat).parse(value);
+                            }
                             statement.setTimestamp(parameterIndex, new Timestamp(timestamp.getTime()));
                             break;
                         default:

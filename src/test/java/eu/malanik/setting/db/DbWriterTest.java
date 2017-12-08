@@ -1,5 +1,11 @@
 package eu.malanik.setting.db;
 
+import eu.malanik.setting.TableData;
+import org.h2.util.IOUtils;
+import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,13 +20,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import eu.malanik.setting.TableData;
-import org.h2.util.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class DbWriterTest {
 
@@ -64,7 +63,7 @@ public class DbWriterTest {
         List<String> integers = Arrays.asList("5", null);
         List<String> doubles = Arrays.asList("3.14", null);
         List<String> booleans = Arrays.asList("TRUE", null);
-        List<String> dates = Arrays.asList("12.05.2017", null);
+        List<String> dates = Arrays.asList("now", null);
         List<String> timestamps = Arrays.asList("01.07.2009 19:23:55", null);
 
         DbWriter underTest = new DbWriter(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
@@ -96,8 +95,7 @@ public class DbWriterTest {
 
                 assertEquals(Boolean.TRUE, resultSet.getBoolean("boolean"));
 
-                assertEquals(LocalDate.parse("12.05.2017", DateTimeFormatter.ofPattern(DATE_FORMAT)),
-                        resultSet.getDate("date").toLocalDate());
+                assertEquals(LocalDate.now(), resultSet.getDate("date").toLocalDate());
 
                 assertEquals(
                         LocalDateTime.parse("01.07.2009 19:23:55", DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT)),
