@@ -8,6 +8,20 @@
 
     <name>Maven plugin for importing csv settings to database</name>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/tyborgplusplus/csv-db-maven-plugin.git</connection>
+        <developerConnection>scm:svn:https://github.com/tyborgplusplus/csv-db-maven-plugin.git</developerConnection>
+        <url>https://github.com/tyborgplusplus/csv-db-maven-plugin.git</url>
+    </scm>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
