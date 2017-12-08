@@ -34,14 +34,14 @@ Configuration
 -------------
 | Parameter  | Required | Default  | Description | 
 | ------------- | ------------- | ------------- | ------------- |
-| csvDirectory  | [X]  |  | Source directory with csv files  |
-| dbUrl  | [X]  | | Connection to target database   | 
-| dbUser  | [X]  |  | The user for database connection |
-| dbPassword  | [X]  |  | The password for database connection |
-| dbDriver  | [ ]  | org.postgresql.Driver  | Content Cell  |
-| dbSchema  | [ ]  |  | Database schema to use |
-| dateFormat  | [ ]  | dd.MM.yyyy  | Format for date values  |
-| timestampFormat  | [ ] | dd.MM.yyyy HH:mm:ss  | Format for timestamp values  |
+| csvDirectory  | yes  |  | Source directory with csv files  |
+| dbUrl  | yes  | | Connection to target database   | 
+| dbUser  | yes  |  | The user for database connection |
+| dbPassword  | yes  |  | The password for database connection |
+| dbDriver  | no  | org.postgresql.Driver  | Content Cell  |
+| dbSchema  | no  |  | Database schema to use |
+| dateFormat  | no  | dd.MM.yyyy  | Format for date values  |
+| timestampFormat  | no | dd.MM.yyyy HH:mm:ss  | Format for timestamp values  |
 
 
 Tested databases
@@ -56,6 +56,8 @@ Example csv
 CSV file name represents table name in database. The '__' (double underscore) in file name 
 can be used as delimiter between table name and comment, like configuration__TEST.csv
 
-First row in csv represents column names in table. For date and timestamp columns 'now' could be used.
+First row in csv represents column names in table. For actual date or timestamp use 'now'.
+
 ![Alt text](/doc/csv.png?raw=true "csv example")
 
+Data types are determined from database columns.
