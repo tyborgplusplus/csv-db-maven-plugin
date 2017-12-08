@@ -18,7 +18,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/tyborgplusplus/csv-db-maven-plugin.git</connection>
-        <developerConnection>scm:svn:https://github.com/tyborgplusplus/csv-db-maven-plugin.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/tyborgplusplus/csv-db-maven-plugin.git</developerConnection>
         <url>https://github.com/tyborgplusplus/csv-db-maven-plugin.git</url>
     </scm>
     
