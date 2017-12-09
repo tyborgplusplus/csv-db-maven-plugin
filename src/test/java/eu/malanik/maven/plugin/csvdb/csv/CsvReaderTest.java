@@ -21,9 +21,9 @@ public class CsvReaderTest {
         assertNotNull(result.get("t_setting"));
 
         TableData data = result.get("t_setting");
-        assertEquals(2, data.getDataByColumnName().size());
-        assertEquals(2, data.getDataByColumnName().get("key").size());
-        assertEquals(2, data.getDataByColumnName().get("value").size());
+        assertEquals(2, data.getRowValuesByColumnName().size());
+        assertEquals(2, data.getRowValuesByColumnName().get("key").size());
+        assertEquals(2, data.getRowValuesByColumnName().get("value").size());
 
     }
 

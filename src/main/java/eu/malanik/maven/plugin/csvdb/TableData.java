@@ -6,10 +6,10 @@ import java.util.Map;
 
 public class TableData {
 
-    private Map<String, List<String>> dataByColumnName = new HashMap<>();
+    private Map<String, List<String>> rowValuesByColumnName = new HashMap<>();
 
-    public Map<String, List<String>> getDataByColumnName() {
-        return dataByColumnName;
+    public Map<String, List<String>> getRowValuesByColumnName() {
+        return rowValuesByColumnName;
     }
 
 }

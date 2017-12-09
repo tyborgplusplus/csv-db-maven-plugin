@@ -47,14 +47,14 @@ public class CsvReader {
 
             Set<String> columns = ((CSVParser) records).getHeaderMap().keySet();
             for (String columnName : columns) {
-                if (!tableData.getDataByColumnName().containsKey(columnName)) {
-                    tableData.getDataByColumnName().put(columnName.toLowerCase(), new ArrayList<>());
+                if (!tableData.getRowValuesByColumnName().containsKey(columnName)) {
+                    tableData.getRowValuesByColumnName().put(columnName.toLowerCase(), new ArrayList<>());
                 }
             }
 
             for (CSVRecord record : records) {
                 for (String column : columns) {
-                    List<String> values = tableData.getDataByColumnName().get(column);
+                    List<String> values = tableData.getRowValuesByColumnName().get(column);
                     String value = record.get(column);
                     values.add(value);
                 }

@@ -70,12 +70,12 @@ public class DbWriterTest {
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
-        tableData.getDataByColumnName().put("string", strings);
-        tableData.getDataByColumnName().put("integer", integers);
-        tableData.getDataByColumnName().put("double", doubles);
-        tableData.getDataByColumnName().put("boolean", booleans);
-        tableData.getDataByColumnName().put("date", dates);
-        tableData.getDataByColumnName().put("timestamp", timestamps);
+        tableData.getRowValuesByColumnName().put("string", strings);
+        tableData.getRowValuesByColumnName().put("integer", integers);
+        tableData.getRowValuesByColumnName().put("double", doubles);
+        tableData.getRowValuesByColumnName().put("boolean", booleans);
+        tableData.getRowValuesByColumnName().put("date", dates);
+        tableData.getRowValuesByColumnName().put("timestamp", timestamps);
         data.put("setting", tableData);
 
         underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
@@ -118,12 +118,12 @@ public class DbWriterTest {
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
-        tableData.getDataByColumnName().put("string", new ArrayList<>());
-        tableData.getDataByColumnName().put("integer", new ArrayList<>());
-        tableData.getDataByColumnName().put("double", new ArrayList<>());
-        tableData.getDataByColumnName().put("boolean", new ArrayList<>());
-        tableData.getDataByColumnName().put("date", new ArrayList<>());
-        tableData.getDataByColumnName().put("timestamp", new ArrayList<>());
+        tableData.getRowValuesByColumnName().put("string", new ArrayList<>());
+        tableData.getRowValuesByColumnName().put("integer", new ArrayList<>());
+        tableData.getRowValuesByColumnName().put("double", new ArrayList<>());
+        tableData.getRowValuesByColumnName().put("boolean", new ArrayList<>());
+        tableData.getRowValuesByColumnName().put("date", new ArrayList<>());
+        tableData.getRowValuesByColumnName().put("timestamp", new ArrayList<>());
         data.put("setting", tableData);
 
         underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);

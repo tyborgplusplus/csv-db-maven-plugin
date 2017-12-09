@@ -23,8 +23,8 @@ public class ListMojo extends AbstractMojo {
             dataByTableName = csvReader.readData();
 
             dataByTableName.forEach((k, v) -> {
-                getLog().info("Table " + k + ", columns " + v.getDataByColumnName().size()
-                    + ", rows " + v.getDataByColumnName().values().iterator().next().size());
+                getLog().info("Table " + k + ", columns " + v.getRowValuesByColumnName().size()
+                    + ", rows " + v.getRowValuesByColumnName().values().iterator().next().size());
             });
         } catch (IOException ex) {
             getLog().error(ex);

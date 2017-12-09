@@ -51,7 +51,7 @@ public class DbWriter {
 
         for (Map.Entry<String, TableData> entry : data.entrySet()) {
             String tableName = entry.getKey();
-            List<String> columnNames = new ArrayList<>(entry.getValue().getDataByColumnName().keySet());
+            List<String> columnNames = new ArrayList<>(entry.getValue().getRowValuesByColumnName().keySet());
 
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate("DELETE FROM " + tableName);
@@ -84,7 +84,7 @@ public class DbWriter {
                         continue;
                     }
                     parameterIndex++;
-                    List<String> columnValues = entry.getValue().getDataByColumnName().get(columnName);
+                    List<String> columnValues = entry.getValue().getRowValuesByColumnName().get(columnName);
                     String value = columnValues.get(rowIndex);
                     Integer columnType = columnTypeByName.get(columnName);
                     if (columnType == null) {
@@ -162,20 +162,20 @@ public class DbWriter {
     }
 
     private int getRowCount(TableData data) {
-        if (data.getDataByColumnName().keySet().isEmpty()) {
+        if (data.getRowValuesByColumnName().keySet().isEmpty()) {
             // empty
             return 0;
         } else {
-            List<String> columns = new ArrayList<>(data.getDataByColumnName().keySet());
+            List<String> columns = new ArrayList<>(data.getRowValuesByColumnName().keySet());
             // every column has the same count of rows
-            return data.getDataByColumnName().get(columns.get(0)).size();
+            return data.getRowValuesByColumnName().get(columns.get(0)).size();
         }
     }
 
     private List<String> determineFilledColumns(final TableData tableData, final int rowIndex) {
         List<String> filledColumns = new ArrayList<>();
 
-        for (Map.Entry<String, List<String>> entry : tableData.getDataByColumnName().entrySet()) {
+        for (Map.Entry<String, List<String>> entry : tableData.getRowValuesByColumnName().entrySet()) {
 
             String rowValueInColumn = entry.getValue().get(rowIndex);
             if (rowValueInColumn != null && !rowValueInColumn.isEmpty()) {
