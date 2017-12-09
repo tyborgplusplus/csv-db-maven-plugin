@@ -33,7 +33,7 @@ public class ImportMojo extends AbstractMojo {
     @Parameter(property = "dbPassword", required = true)
     private String dbPassword;
 
-    @Parameter(property = "dbDriver", required = true, defaultValue = "org.postgresql.Driver")
+    @Parameter(property = "dbDriver", required = true)
     private String dbDriver;
 
     @Parameter(property = "dbSchema")

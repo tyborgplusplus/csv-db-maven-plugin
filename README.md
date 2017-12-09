@@ -4,7 +4,7 @@ csv-db-maven-plugin
 The csv-db-maven-plugin simplifies maintenance of configuration data in applications. 
 It collects the data from csv files and imports this data to database tables. 
 Whole system configuration could be summarized in one csv file 
-or clustered by e.g. environment (development, test, ..). 
+or clustered by e.g. business components. 
 CSV as source format enables sorting and comparing files and is easy to maintain in table editors.   
 
 Goals
@@ -21,11 +21,19 @@ Configuration
   <groupId>eu.malanik</groupId>
   <artifactId>csv-db-maven-plugin</artifactId>
   <version>1.0</version>
+  <dependencies>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.1.4</version>
+    </dependency>
+  </dependencies>
   <configuration>
-    <csvDirectory>src/main/resources/data</csvDirectory>
+    <csvDirectory>src/main/resources/db/data</csvDirectory>
     <dbUrl>jdbc:postgresql://localhost:5432/postgres</dbUrl>
     <dbUser>user</dbUser>
     <dbPassword>password</dbPassword>
+    <dbDriver>org.postgresql.Driver</dbDriver>
   </configuration>
 </plugin>
 ```
@@ -38,7 +46,7 @@ Configuration
 | dbUrl  | yes  | | Connection to target database   | 
 | dbUser  | yes  |  | The user for database connection |
 | dbPassword  | yes  |  | The password for database connection |
-| dbDriver  | no  | org.postgresql.Driver  | JDBC driver class for database connection  |
+| dbDriver  | yes |  | JDBC driver class for database connection  |
 | dbSchema  | no  |  | Database schema to use |
 | dateFormat  | no  | dd.MM.yyyy  | Format for date values  |
 | timestampFormat  | no | dd.MM.yyyy HH:mm:ss  | Format for timestamp values  |
@@ -54,7 +62,7 @@ Tested databases
 Example csv
 ----------------
 CSV file name represents table name in database. The '__' (double underscore) in file name 
-can be used as delimiter between table name and comment, like configuration__TEST.csv
+can be used as delimiter between table name and comment, like configuration__DEV.csv
 
 First row in csv represents column names in table. For actual date or timestamp use 'now'.
 
