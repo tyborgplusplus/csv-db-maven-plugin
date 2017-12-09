@@ -9,7 +9,7 @@
 
     <name>csv db maven plugin</name>
     <description>Maven plugin for importing csv data to database</description>
-    <url>https://github.com/tyborgplusplus/csv-db-maven-plugin</url>
+    <url>${project.scm.url}</url>
 
     <licenses>
         <license>
@@ -28,6 +28,7 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/tyborgplusplus/csv-db-maven-plugin.git</developerConnection>
+        <url>https://github.com/tyborgplusplus/csv-db-maven-plugin</url>
     </scm>
 
     <properties>
