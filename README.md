@@ -14,7 +14,7 @@ Goals
 | list  | List a short summary of data in csv files  | mvn csv-db:list |
 | import  | Import csv data to target database  | mvn csv-db:import |
 
-Configuration
+Usage
 -------------
 ```xml
 <plugin>
