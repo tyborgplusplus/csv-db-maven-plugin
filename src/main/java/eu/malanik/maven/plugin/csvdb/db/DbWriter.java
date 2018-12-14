@@ -3,6 +3,7 @@ package eu.malanik.maven.plugin.csvdb.db;
 import eu.malanik.maven.plugin.csvdb.TableData;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,12 +13,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class DbWriter {
 
@@ -49,9 +52,12 @@ public class DbWriter {
             connection.setSchema(this.schema);
         }
 
-        for (Map.Entry<String, TableData> entry : data.entrySet()) {
-            String tableName = entry.getKey();
-            List<String> columnNames = new ArrayList<>(entry.getValue().getRowValuesByColumnName().keySet());
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
+        DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern(timestampFormat).withZone(ZoneId.systemDefault());
+
+        for (Map.Entry<String, TableData> tableDataByTableName : data.entrySet()) {
+            String tableName = tableDataByTableName.getKey();
+            TableData tableData = tableDataByTableName.getValue();
 
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate("DELETE FROM " + tableName);
@@ -59,33 +65,21 @@ public class DbWriter {
 
             Map<String, Integer> columnTypeByName = this.determineColumnTypes(tableName, connection);
 
-            for (int rowIndex = 0; rowIndex < this.getRowCount(entry.getValue()); rowIndex++) {
+            for (TableData.Row row : tableData.getRows()) {
                 String insertSql = DbWriter.INSERT_SQL.replace("$table", tableName);
 
-                List<String> filledColumns = this.determineFilledColumns(entry.getValue(), rowIndex);
-                if (filledColumns.isEmpty()) {
-                    // row is empty
-                    continue;
-                }
-
-                String joinedColumns = String.join(",", filledColumns);
+                String joinedColumns = String.join(",", row.getValuesByColumnName().keySet());
                 insertSql = insertSql.replace("$columns", joinedColumns);
 
-                String joinedPlaceholders = String.join(",", Collections.nCopies(filledColumns.size(), "?"));
+                String joinedPlaceholders = String.join(",", Collections.nCopies(row.getValuesByColumnName().keySet().size(), "?"));
                 insertSql = insertSql.replace("$values", joinedPlaceholders);
 
                 PreparedStatement statement = connection.prepareStatement(insertSql);
 
                 int parameterIndex = 0;
-                for (int columnNameIndex = 0; columnNameIndex < columnNames.size(); columnNameIndex++) {
-                    String columnName = columnNames.get(columnNameIndex);
-                    if (!filledColumns.contains(columnName)) {
-                        // column name null in this row
-                        continue;
-                    }
+                for (String columnName : row.getValuesByColumnName().keySet()) {
                     parameterIndex++;
-                    List<String> columnValues = entry.getValue().getRowValuesByColumnName().get(columnName);
-                    String value = columnValues.get(rowIndex);
+                    String value = row.getValuesByColumnName().get(columnName);
                     Integer columnType = columnTypeByName.get(columnName);
                     if (columnType == null) {
                         throw new IllegalArgumentException("Column " + columnName + " does not exists in table " + tableName);
@@ -108,22 +102,22 @@ public class DbWriter {
                             statement.setBoolean(parameterIndex, Boolean.valueOf(value));
                             break;
                         case Types.DATE:
-                            java.util.Date date;
+                            Instant date;
                             if ("now".equals(value)) {
-                                date = new java.util.Date();
+                                date = Instant.now();
                             } else {
-                                date = new SimpleDateFormat(dateFormat).parse(value);
+                                date = dateFormatter.parse(value, Instant::from);
                             }
-                            statement.setDate(parameterIndex, new Date(date.getTime()));
+                            statement.setDate(parameterIndex, new Date(date.toEpochMilli()));
                             break;
                         case Types.TIMESTAMP:
-                            java.util.Date timestamp;
+                            Instant timestamp;
                             if ("now".equals(value)) {
-                                timestamp = new java.util.Date();
+                                timestamp = Instant.now();
                             } else {
-                                timestamp = new SimpleDateFormat(timestampFormat).parse(value);
+                                timestamp = timestampFormatter.parse(value, Instant::from);
                             }
-                            statement.setTimestamp(parameterIndex, new Timestamp(timestamp.getTime()));
+                            statement.setTimestamp(parameterIndex, new Timestamp(timestamp.toEpochMilli()));
                             break;
                         default:
                             throw new IllegalAccessException(
@@ -138,8 +132,33 @@ public class DbWriter {
         connection.close();
     }
 
+    public Map<String, Set<String>> determinePrimaryKeyColumns(Set<String> tableNames) throws Exception {
+        Map<String, Set<String>> primaryKeysByTableName = new HashMap<>();
+
+        Connection connection = this.createConnection();
+
+        if (this.schema != null) {
+            connection.setSchema(this.schema);
+        }
+        DatabaseMetaData meta = connection.getMetaData();
+
+        for (String tableName : tableNames) {
+            Set<String> primaryKeys = new HashSet<>();
+            ResultSet rs = meta.getPrimaryKeys(null, this.schema, tableName.toUpperCase());
+            while (rs.next()) {
+                String primaryKeyColumn = rs.getString("COLUMN_NAME");
+                primaryKeys.add(primaryKeyColumn.toLowerCase());
+            }
+            primaryKeysByTableName.put(tableName, primaryKeys);
+        }
+
+        connection.close();
+
+        return primaryKeysByTableName;
+    }
+
     private Map<String, Integer> determineColumnTypes(final String tableName, final Connection connection)
-            throws SQLException {
+        throws SQLException {
         Map<String, Integer> columnTypeByName = new HashMap<>();
 
         Statement statement = connection.createStatement();
@@ -159,31 +178,6 @@ public class DbWriter {
     private Connection createConnection() throws ClassNotFoundException, SQLException {
         Class.forName(this.dbDriver);
         return DriverManager.getConnection(this.url, this.user, this.password);
-    }
-
-    private int getRowCount(TableData data) {
-        if (data.getRowValuesByColumnName().keySet().isEmpty()) {
-            // empty
-            return 0;
-        } else {
-            List<String> columns = new ArrayList<>(data.getRowValuesByColumnName().keySet());
-            // every column has the same count of rows
-            return data.getRowValuesByColumnName().get(columns.get(0)).size();
-        }
-    }
-
-    private List<String> determineFilledColumns(final TableData tableData, final int rowIndex) {
-        List<String> filledColumns = new ArrayList<>();
-
-        for (Map.Entry<String, List<String>> entry : tableData.getRowValuesByColumnName().entrySet()) {
-
-            String rowValueInColumn = entry.getValue().get(rowIndex);
-            if (rowValueInColumn != null && !rowValueInColumn.isEmpty()) {
-                filledColumns.add(entry.getKey());
-            }
-        }
-
-        return filledColumns;
     }
 
 }

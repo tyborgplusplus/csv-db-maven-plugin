@@ -1,0 +1,4 @@
+key,value
+ITEM_QUANTITY,100
+PAYMENT_URL,http://base.malanik.eu
+VERBOSE,true

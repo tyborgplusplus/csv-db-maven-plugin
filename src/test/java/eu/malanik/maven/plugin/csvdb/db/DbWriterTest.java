@@ -2,9 +2,9 @@ package eu.malanik.maven.plugin.csvdb.db;
 
 import eu.malanik.maven.plugin.csvdb.TableData;
 import org.h2.util.IOUtils;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -15,11 +15,12 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class DbWriterTest {
 
@@ -37,20 +38,24 @@ public class DbWriterTest {
 
     private Connection connection = null;
 
-    @Before
+    @BeforeEach
     public void setUp() throws SQLException, ClassNotFoundException {
         Statement statement;
         try {
             Class.forName(DRIVER_CLASS);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS SETTING ("
-                    + "STRING VARCHAR(30),"
-                    + "INTEGER INT,"
-                    + "DOUBLE DOUBLE,"
-                    + "BOOLEAN BOOLEAN,"
-                    + "DATE DATE,"
-                    + "TIMESTAMP TIMESTAMP)");
+            statement.executeUpdate("DROP TABLE IF EXISTS SETTING");
+            statement.executeUpdate("CREATE TABLE SETTING ("
+                + "STRING VARCHAR(30) PRIMARY KEY,"
+                + "INTEGER INT,"
+                + "DOUBLE DOUBLE,"
+                + "BOOLEAN BOOLEAN,"
+                + "DATE DATE,"
+                + "TIMESTAMP TIMESTAMP,"
+                + "EMPTY VARCHAR(30),"
+                + "NULLL VARCHAR(30))");
+
             statement.close();
         } catch (Exception e) {
             throw e;
@@ -59,23 +64,22 @@ public class DbWriterTest {
 
     @Test
     public void writeToDb() throws Exception {
-        List<String> strings = Arrays.asList("text", null);
-        List<String> integers = Arrays.asList("5", null);
-        List<String> doubles = Arrays.asList("3.14", null);
-        List<String> booleans = Arrays.asList("TRUE", null);
-        List<String> dates = Arrays.asList("now", null);
-        List<String> timestamps = Arrays.asList("01.07.2009 19:23:55", null);
-
         DbWriter underTest = new DbWriter(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
-        tableData.getRowValuesByColumnName().put("string", strings);
-        tableData.getRowValuesByColumnName().put("integer", integers);
-        tableData.getRowValuesByColumnName().put("double", doubles);
-        tableData.getRowValuesByColumnName().put("boolean", booleans);
-        tableData.getRowValuesByColumnName().put("date", dates);
-        tableData.getRowValuesByColumnName().put("timestamp", timestamps);
+        tableData.getColumnNames().addAll(new HashSet<>(Arrays.asList("string", "integer", "double", "boolean", "date", "timestamp")));
+        tableData.getRows().add(new TableData.Row("string", new HashMap<String, String>()
+        {{
+            put("string", "text");
+            put("integer", "5");
+            put("double", "3.14");
+            put("boolean", "true");
+            put("date", "now");
+            put("timestamp", "01.07.2009 19:23:55");
+            put("empty", "");
+            put("nulll", null);
+        }}));
         data.put("setting", tableData);
 
         underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
@@ -87,21 +91,25 @@ public class DbWriterTest {
             int resultSetSize = 0;
             while (resultSet.next()) {
                 resultSetSize++;
-                assertEquals("text", resultSet.getString("string"));
+                Assertions.assertEquals("text", resultSet.getString("string"));
 
-                assertEquals(5, resultSet.getInt("integer"));
+                Assertions.assertEquals(5, resultSet.getInt("integer"));
 
-                assertEquals(BigDecimal.valueOf(3.14), BigDecimal.valueOf(resultSet.getDouble("double")));
+                Assertions.assertEquals(BigDecimal.valueOf(3.14), BigDecimal.valueOf(resultSet.getDouble("double")));
 
-                assertEquals(Boolean.TRUE, resultSet.getBoolean("boolean"));
+                Assertions.assertEquals(Boolean.TRUE, resultSet.getBoolean("boolean"));
 
-                assertEquals(LocalDate.now(), resultSet.getDate("date").toLocalDate());
+                Assertions.assertEquals(LocalDate.now(), resultSet.getDate("date").toLocalDate());
 
-                assertEquals(
+                Assertions.assertEquals(
                         LocalDateTime.parse("01.07.2009 19:23:55", DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT)),
                         resultSet.getTimestamp("timestamp").toLocalDateTime());
+
+                Assertions.assertEquals("", resultSet.getString("empty"));
+
+                Assertions.assertNull(resultSet.getString("nulll"));
             }
-            assertEquals(1, resultSetSize);
+            Assertions.assertEquals(1, resultSetSize);
 
             resultSet.close();
         } catch (Exception e) {
@@ -118,12 +126,7 @@ public class DbWriterTest {
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
-        tableData.getRowValuesByColumnName().put("string", new ArrayList<>());
-        tableData.getRowValuesByColumnName().put("integer", new ArrayList<>());
-        tableData.getRowValuesByColumnName().put("double", new ArrayList<>());
-        tableData.getRowValuesByColumnName().put("boolean", new ArrayList<>());
-        tableData.getRowValuesByColumnName().put("date", new ArrayList<>());
-        tableData.getRowValuesByColumnName().put("timestamp", new ArrayList<>());
+        tableData.getColumnNames().addAll(new HashSet<>(Arrays.asList("key", "value")));
         data.put("setting", tableData);
 
         underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
@@ -136,7 +139,7 @@ public class DbWriterTest {
             while (resultSet.next()) {
                 resultSetSize++;
             }
-            assertEquals(0, resultSetSize);
+            Assertions.assertEquals(0, resultSetSize);
 
             resultSet.close();
         } catch (Exception e) {
@@ -165,7 +168,7 @@ public class DbWriterTest {
             while (resultSet.next()) {
                 resultSetSize++;
             }
-            assertEquals(0, resultSetSize);
+            Assertions.assertEquals(0, resultSetSize);
 
             resultSet.close();
         } catch (Exception e) {
@@ -176,5 +179,18 @@ public class DbWriterTest {
 
     }
 
+
+    @Test
+    public void determinePrimaryKeyColumns() throws Exception {
+        DbWriter underTest = new DbWriter(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
+        String tableName = "setting";
+
+        Map<String, Set<String>> result = underTest.determinePrimaryKeyColumns(new HashSet<>(Collections.singletonList(tableName)));
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertNotNull(result.get(tableName));
+        Assertions.assertEquals(1, result.get(tableName).size());
+        Assertions.assertEquals("string", result.get(tableName).iterator().next());
+    }
 
 }
