@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DbWriterTest {
+public class DatabaseConnectorTest {
 
     private static final String DRIVER_CLASS = "org.h2.Driver";
 
@@ -64,7 +64,7 @@ public class DbWriterTest {
 
     @Test
     public void writeToDb() throws Exception {
-        DbWriter underTest = new DbWriter(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
+        DatabaseConnector underTest = new DatabaseConnector(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
@@ -122,7 +122,7 @@ public class DbWriterTest {
 
     @Test
     public void writeToDbNoRows() throws Exception {
-        DbWriter underTest = new DbWriter(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
+        DatabaseConnector underTest = new DatabaseConnector(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
@@ -152,7 +152,7 @@ public class DbWriterTest {
 
     @Test
     public void writeToDbNoColumns() throws Exception {
-        DbWriter underTest = new DbWriter(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
+        DatabaseConnector underTest = new DatabaseConnector(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
@@ -182,7 +182,7 @@ public class DbWriterTest {
 
     @Test
     public void determinePrimaryKeyColumns() throws Exception {
-        DbWriter underTest = new DbWriter(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
+        DatabaseConnector underTest = new DatabaseConnector(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
         String tableName = "setting";
 
         Map<String, Set<String>> result = underTest.determinePrimaryKeyColumns(new HashSet<>(Collections.singletonList(tableName)));

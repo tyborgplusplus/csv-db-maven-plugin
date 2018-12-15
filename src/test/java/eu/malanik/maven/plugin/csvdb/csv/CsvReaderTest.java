@@ -18,7 +18,7 @@ public class CsvReaderTest {
 
     @Test
     public void readSimpleData() throws IOException {
-        CsvReader underTest = new CsvReader(Paths.get("src/test/resources/simple"), new SystemStreamLog());
+        CsvReader underTest = new CsvReader(Paths.get("src/test/resources/simple"), ';', new SystemStreamLog());
 
         Map<String, TableData> result = underTest.readData(new HashSet<>(0), new HashMap<>(0));
 
@@ -113,5 +113,6 @@ public class CsvReaderTest {
         Assertions.assertEquals("http://test.malanik.eu", data.getRows().get(2).getValuesByColumnName().get("value"));
 
     }
+
 
 }

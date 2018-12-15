@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DbWriter {
+public class DatabaseConnector {
 
     private static final String INSERT_SQL = "INSERT INTO $table ($columns) VALUES ($values)";
 
@@ -36,7 +36,7 @@ public class DbWriter {
 
     private String dbDriver;
 
-    public DbWriter(String url, String user, String password, String dbDriver, String schema) {
+    public DatabaseConnector(String url, String user, String password, String dbDriver, String schema) {
         this.url = url;
         this.user = user;
         this.password = password;
@@ -66,7 +66,7 @@ public class DbWriter {
             Map<String, Integer> columnTypeByName = this.determineColumnTypes(tableName, connection);
 
             for (TableData.Row row : tableData.getRows()) {
-                String insertSql = DbWriter.INSERT_SQL.replace("$table", tableName);
+                String insertSql = DatabaseConnector.INSERT_SQL.replace("$table", tableName);
 
                 String joinedColumns = String.join(",", row.getValuesByColumnName().keySet());
                 insertSql = insertSql.replace("$columns", joinedColumns);
@@ -143,13 +143,12 @@ public class DbWriter {
         DatabaseMetaData meta = connection.getMetaData();
 
         for (String tableName : tableNames) {
-            Set<String> primaryKeys = new HashSet<>();
-            ResultSet rs = meta.getPrimaryKeys(null, this.schema, tableName.toUpperCase());
-            while (rs.next()) {
-                String primaryKeyColumn = rs.getString("COLUMN_NAME");
-                primaryKeys.add(primaryKeyColumn.toLowerCase());
-            }
-            primaryKeysByTableName.put(tableName, primaryKeys);
+            Set<String> primaryKeyColumns = new HashSet<>();
+            // some DB provider stores table meta data lower case (PostgreSQL)
+            primaryKeyColumns.addAll(determinePrimaryKeyColumns(meta, tableName.toLowerCase()));
+            // and some upper case (H2)
+            primaryKeyColumns.addAll(determinePrimaryKeyColumns(meta, tableName.toUpperCase()));
+            primaryKeysByTableName.put(tableName, primaryKeyColumns);
         }
 
         connection.close();
@@ -178,6 +177,16 @@ public class DbWriter {
     private Connection createConnection() throws ClassNotFoundException, SQLException {
         Class.forName(this.dbDriver);
         return DriverManager.getConnection(this.url, this.user, this.password);
+    }
+
+    private Set<String> determinePrimaryKeyColumns(DatabaseMetaData meta, String tableName) throws SQLException {
+        Set<String> primaryKeyColumns = new HashSet<>();
+        ResultSet rs = meta.getPrimaryKeys(null, this.schema, tableName);
+        while (rs.next()) {
+            String primaryKeyColumn = rs.getString("COLUMN_NAME");
+            primaryKeyColumns.add(primaryKeyColumn.toLowerCase());
+        }
+        return primaryKeyColumns;
     }
 
 }

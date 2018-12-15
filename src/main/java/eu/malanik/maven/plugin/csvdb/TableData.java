@@ -10,11 +10,11 @@ import java.util.Set;
 
 public class TableData {
 
-    private Set<String> columnNames = new HashSet<>();
+    private List<String> columnNames = new ArrayList<>();
 
     private List<Row> rows = new ArrayList<>();
 
-    public Set<String> getColumnNames() {
+    public List<String> getColumnNames() {
         return columnNames;
     }
 

@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,12 +25,22 @@ public class CsvReader {
 
     private Path csvDirectory;
 
+    private char delimiter;
+
     private Log log;
 
     public CsvReader(Path csvDirectory, Log log) {
         Objects.requireNonNull(csvDirectory);
         Objects.requireNonNull(log);
         this.csvDirectory = csvDirectory;
+        this.log = log;
+    }
+
+    public CsvReader(Path csvDirectory, char delimiter, Log log) {
+        Objects.requireNonNull(csvDirectory);
+        Objects.requireNonNull(log);
+        this.csvDirectory = csvDirectory;
+        this.delimiter = delimiter;
         this.log = log;
     }
 
@@ -61,11 +72,17 @@ public class CsvReader {
             }
             Set<String> primaryKeyColumns = primaryKeyColumnsByTableName.get(tableName);
 
-            CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new FileReader(file));
+            CSVFormat csvFormat = CSVFormat.DEFAULT.withFirstRecordAsHeader();
+            if (delimiter != '\u0000') { // default char
+                csvFormat = csvFormat.withDelimiter(delimiter);
+            }
+            CSVParser records = csvFormat.parse(new FileReader(file));
 
             Set<String> columns = records.getHeaderMap().keySet();
             for (String columnName : columns) {
-                tableData.getColumnNames().add(columnName.toLowerCase());
+                if (!tableData.getColumnNames().contains(columnName.toLowerCase())) {
+                    tableData.getColumnNames().add(columnName.toLowerCase());
+                }
             }
 
             for (CSVRecord record : records) {
@@ -79,7 +96,9 @@ public class CsvReader {
                         rowId.append(valueFromFile);
                     }
 
-                    row.getValuesByColumnName().put(column, !valueFromFile.isEmpty() ? valueFromFile : null);
+                    if (valueFromFile != null && !valueFromFile.isEmpty()) {
+                        row.getValuesByColumnName().put(column, valueFromFile);
+                    }
                 }
 
                 row.setId(rowId.length() > 0 ? rowId.toString() : null);
@@ -126,6 +145,9 @@ public class CsvReader {
     }
 
     private List<File> searchFiles() throws IOException {
+        if (this.csvDirectory.toFile().listFiles() == null) {
+            return Collections.emptyList();
+        }
         return Files.walk(csvDirectory)
             .filter(Files::isRegularFile)
             .map(Path::toFile)

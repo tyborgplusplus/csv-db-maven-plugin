@@ -1,4 +1,5 @@
-key,value
-ITEM_QUANTITY,100
-VERBOSE,
-,
+key;value
+ITEM_QUANTITY;100
+VERBOSE;
+;
+
