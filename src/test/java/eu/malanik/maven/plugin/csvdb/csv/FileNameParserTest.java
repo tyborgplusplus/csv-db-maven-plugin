@@ -9,43 +9,43 @@ public class FileNameParserTest {
     @Test
     public void extractSimpleTableName() {
 
-        FileNameData fileNameData = FileNameParser.parseCsvFileName("setting.csv");
+        FileNameData fileNameData = FileNameParser.parseCsvFileName("SETTING.CSV");
 
-        Assertions.assertEquals("setting", fileNameData.getTableName());
-        Assertions.assertEquals(0, fileNameData.getFilters().size());
+        Assertions.assertEquals("SETTING", fileNameData.getTableName());
+        Assertions.assertEquals(0, fileNameData.getViews().size());
 
     }
 
     @Test
     public void extract2WordsTableName() {
 
-        FileNameData fileNameData = FileNameParser.parseCsvFileName("market_config.csv");
+        FileNameData fileNameData = FileNameParser.parseCsvFileName("MARKET_CONFIG.CSV");
 
-        Assertions.assertEquals("market_config", fileNameData.getTableName());
-        Assertions.assertEquals(0, fileNameData.getFilters().size());
+        Assertions.assertEquals("MARKET_CONFIG", fileNameData.getTableName());
+        Assertions.assertEquals(0, fileNameData.getViews().size());
 
     }
 
     @Test
     public void extractSimpleTableNameWithMarks() {
 
-        FileNameData fileNameData = FileNameParser.parseCsvFileName("setting__de.csv");
+        FileNameData fileNameData = FileNameParser.parseCsvFileName("SETTING__DE.CSV");
 
-        Assertions.assertEquals("setting", fileNameData.getTableName());
-        Assertions.assertEquals(1, fileNameData.getFilters().size());
-        Assertions.assertEquals("de", fileNameData.getFilters().toArray()[0]);
+        Assertions.assertEquals("SETTING", fileNameData.getTableName());
+        Assertions.assertEquals(1, fileNameData.getViews().size());
+        Assertions.assertEquals("DE", fileNameData.getViews().toArray()[0]);
 
     }
 
     @Test
     public void extract2WordsTableNameWithMarks() {
 
-        FileNameData fileNameData = FileNameParser.parseCsvFileName("market_config__de_test.csv");
+        FileNameData fileNameData = FileNameParser.parseCsvFileName("MARKET_CONFIG__DE_TEST.CSV");
 
-        Assertions.assertEquals("market_config", fileNameData.getTableName());
-        Assertions.assertEquals(2, fileNameData.getFilters().size());
-        Assertions.assertEquals("de", fileNameData.getFilters().toArray()[0]);
-        Assertions.assertEquals("test", fileNameData.getFilters().toArray()[1]);
+        Assertions.assertEquals("MARKET_CONFIG", fileNameData.getTableName());
+        Assertions.assertEquals(2, fileNameData.getViews().size());
+        Assertions.assertEquals("DE", fileNameData.getViews().toArray()[0]);
+        Assertions.assertEquals("TEST", fileNameData.getViews().toArray()[1]);
 
     }
 

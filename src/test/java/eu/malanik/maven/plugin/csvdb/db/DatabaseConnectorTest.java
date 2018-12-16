@@ -68,19 +68,19 @@ public class DatabaseConnectorTest {
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
-        tableData.getColumnNames().addAll(new HashSet<>(Arrays.asList("string", "integer", "double", "boolean", "date", "timestamp")));
+        tableData.getColumnNames().addAll(new HashSet<>(Arrays.asList("STRING", "INTEGER", "DOUBLE", "BOOLEAN", "DATE", "TIMESTAMP", "EMPTY", "NULLL")));
         tableData.getRows().add(new TableData.Row("string", new HashMap<String, String>()
         {{
-            put("string", "text");
-            put("integer", "5");
-            put("double", "3.14");
-            put("boolean", "true");
-            put("date", "now");
-            put("timestamp", "01.07.2009 19:23:55");
-            put("empty", "");
-            put("nulll", null);
+            put("STRING", "text");
+            put("INTEGER", "5");
+            put("DOUBLE", "3.14");
+            put("BOOLEAN", "true");
+            put("DATE", "now");
+            put("TIMESTAMP", "01.07.2009 19:23:55");
+            put("EMPTY", "");
+            put("NULLL", null);
         }}));
-        data.put("setting", tableData);
+        data.put("SETTING", tableData);
 
         underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
 
@@ -91,23 +91,23 @@ public class DatabaseConnectorTest {
             int resultSetSize = 0;
             while (resultSet.next()) {
                 resultSetSize++;
-                Assertions.assertEquals("text", resultSet.getString("string"));
+                Assertions.assertEquals("text", resultSet.getString("STRING"));
 
-                Assertions.assertEquals(5, resultSet.getInt("integer"));
+                Assertions.assertEquals(5, resultSet.getInt("INTEGER"));
 
-                Assertions.assertEquals(BigDecimal.valueOf(3.14), BigDecimal.valueOf(resultSet.getDouble("double")));
+                Assertions.assertEquals(BigDecimal.valueOf(3.14), BigDecimal.valueOf(resultSet.getDouble("DOUBLE")));
 
-                Assertions.assertEquals(Boolean.TRUE, resultSet.getBoolean("boolean"));
+                Assertions.assertEquals(Boolean.TRUE, resultSet.getBoolean("BOOLEAN"));
 
-                Assertions.assertEquals(LocalDate.now(), resultSet.getDate("date").toLocalDate());
+                Assertions.assertEquals(LocalDate.now(), resultSet.getDate("DATE").toLocalDate());
 
                 Assertions.assertEquals(
                         LocalDateTime.parse("01.07.2009 19:23:55", DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT)),
-                        resultSet.getTimestamp("timestamp").toLocalDateTime());
+                        resultSet.getTimestamp("TIMESTAMP").toLocalDateTime());
 
-                Assertions.assertEquals("", resultSet.getString("empty"));
+                Assertions.assertEquals("", resultSet.getString("EMPTY"));
 
-                Assertions.assertNull(resultSet.getString("nulll"));
+                Assertions.assertNull(resultSet.getString("NULLL"));
             }
             Assertions.assertEquals(1, resultSetSize);
 
@@ -126,8 +126,8 @@ public class DatabaseConnectorTest {
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
-        tableData.getColumnNames().addAll(new HashSet<>(Arrays.asList("key", "value")));
-        data.put("setting", tableData);
+        tableData.getColumnNames().addAll(new HashSet<>(Arrays.asList("KEY", "VALUE")));
+        data.put("SETTING", tableData);
 
         underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
 
@@ -156,7 +156,7 @@ public class DatabaseConnectorTest {
 
         Map<String, TableData> data = new HashMap<>();
         TableData tableData = new TableData();
-        data.put("setting", tableData);
+        data.put("SETTING", tableData);
 
         underTest.writeToDb(data, DATE_FORMAT, TIMESTAMP_FORMAT);
 
@@ -183,14 +183,14 @@ public class DatabaseConnectorTest {
     @Test
     public void determinePrimaryKeyColumns() throws Exception {
         DatabaseConnector underTest = new DatabaseConnector(DB_URL, DB_USER, DB_PASSWORD, DRIVER_CLASS, null);
-        String tableName = "setting";
+        String tableName = "SETTING";
 
         Map<String, Set<String>> result = underTest.determinePrimaryKeyColumns(new HashSet<>(Collections.singletonList(tableName)));
 
         Assertions.assertEquals(1, result.size());
         Assertions.assertNotNull(result.get(tableName));
         Assertions.assertEquals(1, result.get(tableName).size());
-        Assertions.assertEquals("string", result.get(tableName).iterator().next());
+        Assertions.assertEquals("STRING", result.get(tableName).iterator().next());
     }
 
 }

@@ -7,7 +7,7 @@ public class FileNameData {
 
     private String tableName;
 
-    private Set<String> filters = new HashSet<>();
+    private Set<String> views = new HashSet<>();
 
     public String getTableName() {
         return tableName;
@@ -17,8 +17,8 @@ public class FileNameData {
         this.tableName = tableName;
     }
 
-    public Set<String> getFilters() {
-        return filters;
+    public Set<String> getViews() {
+        return views;
     }
 
 }

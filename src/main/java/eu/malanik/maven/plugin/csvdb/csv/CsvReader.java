@@ -44,7 +44,7 @@ public class CsvReader {
         this.log = log;
     }
 
-    public Map<String, TableData> readData(Set<String> configuredFilters, Map<String, Set<String>> primaryKeyColumnsByTableName) throws IOException {
+    public Map<String, TableData> readData(Set<String> configuredViews, Map<String, Set<String>> primaryKeyColumnsByTableName) throws IOException {
         Map<String, TableData> dataByTableName = new HashMap<>();
 
         List<File> csvFiles = searchFiles();
@@ -54,14 +54,14 @@ public class CsvReader {
         }
 
         for (File file : csvFiles) {
-            FileNameData fileNameData = FileNameParser.parseCsvFileName(file.getName().toLowerCase());
+            FileNameData fileNameData = FileNameParser.parseCsvFileName(file.getName().toUpperCase());
             String tableName = fileNameData.getTableName();
 
-            Set<String> nameFilters = fileNameData.getFilters();
-            Set<String> copyOfNameFilters = new HashSet<>(nameFilters);
-            copyOfNameFilters.removeAll(configuredFilters);
-            if (!copyOfNameFilters.isEmpty()) {
-                log.info(file.getName() + " ignored because of configured filters: " + configuredFilters);
+            Set<String> nameViews = fileNameData.getViews();
+            Set<String> copyOfNameViews = new HashSet<>(nameViews);
+            copyOfNameViews.removeAll(configuredViews);
+            if (!copyOfNameViews.isEmpty()) {
+                log.info(file.getName() + " ignored because of configured views: " + configuredViews);
                 continue;
             }
 
@@ -80,8 +80,8 @@ public class CsvReader {
 
             Set<String> columns = records.getHeaderMap().keySet();
             for (String columnName : columns) {
-                if (!tableData.getColumnNames().contains(columnName.toLowerCase())) {
-                    tableData.getColumnNames().add(columnName.toLowerCase());
+                if (!tableData.getColumnNames().contains(columnName.toUpperCase())) {
+                    tableData.getColumnNames().add(columnName.toUpperCase());
                 }
             }
 
@@ -92,26 +92,26 @@ public class CsvReader {
                 for (String column : columns) {
                     String valueFromFile = record.get(column);
 
-                    if (primaryKeyColumns != null && primaryKeyColumns.contains(column)) {
+                    if (primaryKeyColumns != null && primaryKeyColumns.contains(column.toUpperCase())) {
                         rowId.append(valueFromFile);
                     }
 
                     if (valueFromFile != null && !valueFromFile.isEmpty()) {
-                        row.getValuesByColumnName().put(column, valueFromFile);
+                        row.getValuesByColumnName().put(column.toUpperCase(), valueFromFile);
                     }
                 }
 
                 row.setId(rowId.length() > 0 ? rowId.toString() : null);
 
-                row.getFilters().addAll(nameFilters);
+                row.getViews().addAll(nameViews);
 
                 TableData.Row existingRow = tableData.getById(row.getId());
                 if (existingRow != null) {
-                    int existingRowFilterImportance = existingRow.getFilters().size();
-                    int fileRowFilterImportance = nameFilters.size();
-                    if (existingRowFilterImportance < fileRowFilterImportance) {
+                    int existingRowViewImportance = existingRow.getViews().size();
+                    int fileRowViewImportance = nameViews.size();
+                    if (existingRowViewImportance < fileRowViewImportance) {
                         tableData.getRows().remove(existingRow);
-                    } else if (existingRowFilterImportance == fileRowFilterImportance) {
+                    } else if (existingRowViewImportance == fileRowViewImportance) {
                         log.warn("Same importance of " + existingRow + " vs. " + row);
                     }
                 }
@@ -137,7 +137,7 @@ public class CsvReader {
         }
 
         for (File file : csvFiles) {
-            FileNameData fileNameData = FileNameParser.parseCsvFileName(file.getName().toLowerCase());
+            FileNameData fileNameData = FileNameParser.parseCsvFileName(file.getName().toUpperCase());
             result.add(fileNameData.getTableName());
         }
 
@@ -151,7 +151,7 @@ public class CsvReader {
         return Files.walk(csvDirectory)
             .filter(Files::isRegularFile)
             .map(Path::toFile)
-            .filter(f -> f.getName().toLowerCase().endsWith(".csv"))
+            .filter(f -> f.getName().toUpperCase().endsWith(".CSV"))
             .sorted()
             .collect(Collectors.toList());
     }

@@ -37,7 +37,7 @@ public class TableData {
 
         private Map<String, String> valuesByColumnName = new HashMap<>(0);
 
-        private Set<String> filters = new HashSet<>(0);
+        private Set<String> views = new HashSet<>(0);
 
         public Row() {
         }
@@ -59,13 +59,13 @@ public class TableData {
             return valuesByColumnName;
         }
 
-        public Set<String> getFilters() {
-            return filters;
+        public Set<String> getViews() {
+            return views;
         }
 
         @Override
         public String toString() {
-            return "Row { id:'" + id + ", valuesByColumnName:" + valuesByColumnName + ", filters:" + filters + " }";
+            return "Row { id:'" + id + ", valuesByColumnName:" + valuesByColumnName + ", views:" + views + " }";
         }
     }
 

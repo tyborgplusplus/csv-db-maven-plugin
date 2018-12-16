@@ -23,57 +23,57 @@ public class CsvReaderTest {
         Map<String, TableData> result = underTest.readData(new HashSet<>(0), new HashMap<>(0));
 
         Assertions.assertEquals(1, result.size());
-        Assertions.assertNotNull(result.get("setting"));
+        Assertions.assertNotNull(result.get("SETTING"));
 
-        TableData data = result.get("setting");
+        TableData data = result.get("SETTING");
         Assertions.assertEquals(2, data.getColumnNames().size());
-        Assertions.assertTrue(data.getColumnNames().contains("key"));
-        Assertions.assertTrue(data.getColumnNames().contains("value"));
+        Assertions.assertTrue(data.getColumnNames().contains("KEY"));
+        Assertions.assertTrue(data.getColumnNames().contains("VALUE"));
 
         Assertions.assertEquals(2, data.getRows().size());
         Assertions.assertNull(data.getRows().get(0).getId());
-        Assertions.assertTrue(data.getRows().get(0).getFilters().isEmpty());
-        Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(0).getValuesByColumnName().get("key"));
-        Assertions.assertEquals("100", data.getRows().get(0).getValuesByColumnName().get("value"));
+        Assertions.assertTrue(data.getRows().get(0).getViews().isEmpty());
+        Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(0).getValuesByColumnName().get("KEY"));
+        Assertions.assertEquals("100", data.getRows().get(0).getValuesByColumnName().get("VALUE"));
 
         Assertions.assertNull(data.getRows().get(1).getId());
-        Assertions.assertTrue(data.getRows().get(1).getFilters().isEmpty());
-        Assertions.assertEquals("VERBOSE", data.getRows().get(1).getValuesByColumnName().get("key"));
-        Assertions.assertNull(data.getRows().get(1).getValuesByColumnName().get("value"));
+        Assertions.assertTrue(data.getRows().get(1).getViews().isEmpty());
+        Assertions.assertEquals("VERBOSE", data.getRows().get(1).getValuesByColumnName().get("KEY"));
+        Assertions.assertNull(data.getRows().get(1).getValuesByColumnName().get("VALUE"));
 
     }
 
     @Test
-    public void readComplexDataWithoutFilter() throws IOException {
+    public void readComplexDataWithoutView() throws IOException {
         CsvReader underTest = new CsvReader(Paths.get("src/test/resources/complex"), new SystemStreamLog());
 
         Map<String, Set<String>> primaryKeyColumnsByTableName = new HashMap<>();
-        primaryKeyColumnsByTableName.put("setting", new HashSet<>(Collections.singletonList("key")));
+        primaryKeyColumnsByTableName.put("SETTING", new HashSet<>(Collections.singletonList("KEY")));
         Map<String, TableData> result = underTest.readData(new HashSet<>(0), primaryKeyColumnsByTableName);
 
         Assertions.assertEquals(1, result.size());
-        Assertions.assertNotNull(result.get("setting"));
+        Assertions.assertNotNull(result.get("SETTING"));
 
-        TableData data = result.get("setting");
+        TableData data = result.get("SETTING");
         Assertions.assertEquals(2, data.getColumnNames().size());
-        Assertions.assertTrue(data.getColumnNames().contains("key"));
-        Assertions.assertTrue(data.getColumnNames().contains("value"));
+        Assertions.assertTrue(data.getColumnNames().contains("KEY"));
+        Assertions.assertTrue(data.getColumnNames().contains("VALUE"));
 
         Assertions.assertEquals(3, data.getRows().size());
         Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(0).getId());
-        Assertions.assertTrue(data.getRows().get(0).getFilters().isEmpty());
-        Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(0).getValuesByColumnName().get("key"));
-        Assertions.assertEquals("100", data.getRows().get(0).getValuesByColumnName().get("value"));
+        Assertions.assertTrue(data.getRows().get(0).getViews().isEmpty());
+        Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(0).getValuesByColumnName().get("KEY"));
+        Assertions.assertEquals("100", data.getRows().get(0).getValuesByColumnName().get("VALUE"));
 
         Assertions.assertEquals("PAYMENT_URL", data.getRows().get(1).getId());
-        Assertions.assertTrue(data.getRows().get(1).getFilters().isEmpty());
-        Assertions.assertEquals("PAYMENT_URL", data.getRows().get(1).getValuesByColumnName().get("key"));
-        Assertions.assertEquals("http://base.malanik.eu", data.getRows().get(1).getValuesByColumnName().get("value"));
+        Assertions.assertTrue(data.getRows().get(1).getViews().isEmpty());
+        Assertions.assertEquals("PAYMENT_URL", data.getRows().get(1).getValuesByColumnName().get("KEY"));
+        Assertions.assertEquals("http://base.malanik.eu", data.getRows().get(1).getValuesByColumnName().get("VALUE"));
 
         Assertions.assertEquals("VERBOSE", data.getRows().get(2).getId());
-        Assertions.assertTrue(data.getRows().get(2).getFilters().isEmpty());
-        Assertions.assertEquals("VERBOSE", data.getRows().get(2).getValuesByColumnName().get("key"));
-        Assertions.assertEquals("true", data.getRows().get(2).getValuesByColumnName().get("value"));
+        Assertions.assertTrue(data.getRows().get(2).getViews().isEmpty());
+        Assertions.assertEquals("VERBOSE", data.getRows().get(2).getValuesByColumnName().get("KEY"));
+        Assertions.assertEquals("true", data.getRows().get(2).getValuesByColumnName().get("VALUE"));
 
     }
 
@@ -82,35 +82,35 @@ public class CsvReaderTest {
         CsvReader underTest = new CsvReader(Paths.get("src/test/resources/complex"), new SystemStreamLog());
 
         Map<String, Set<String>> primaryKeyColumnsByTableName = new HashMap<>();
-        primaryKeyColumnsByTableName.put("setting", new HashSet<>(Collections.singletonList("key")));
-        Map<String, TableData> result = underTest.readData(new HashSet<>(Arrays.asList("us", "test")), primaryKeyColumnsByTableName);
+        primaryKeyColumnsByTableName.put("SETTING", new HashSet<>(Collections.singletonList("KEY")));
+        Map<String, TableData> result = underTest.readData(new HashSet<>(Arrays.asList("US", "TEST")), primaryKeyColumnsByTableName);
 
         Assertions.assertEquals(1, result.size());
-        Assertions.assertNotNull(result.get("setting"));
+        Assertions.assertNotNull(result.get("SETTING"));
 
-        TableData data = result.get("setting");
+        TableData data = result.get("SETTING");
         Assertions.assertEquals(2, data.getColumnNames().size());
-        Assertions.assertTrue(data.getColumnNames().contains("key"));
-        Assertions.assertTrue(data.getColumnNames().contains("value"));
+        Assertions.assertTrue(data.getColumnNames().contains("KEY"));
+        Assertions.assertTrue(data.getColumnNames().contains("VALUE"));
 
         Assertions.assertEquals(3, data.getRows().size());
         Assertions.assertEquals("VERBOSE", data.getRows().get(0).getId());
-        Assertions.assertTrue(data.getRows().get(0).getFilters().isEmpty());
-        Assertions.assertEquals("VERBOSE", data.getRows().get(0).getValuesByColumnName().get("key"));
-        Assertions.assertEquals("true", data.getRows().get(0).getValuesByColumnName().get("value"));
+        Assertions.assertTrue(data.getRows().get(0).getViews().isEmpty());
+        Assertions.assertEquals("VERBOSE", data.getRows().get(0).getValuesByColumnName().get("KEY"));
+        Assertions.assertEquals("true", data.getRows().get(0).getValuesByColumnName().get("VALUE"));
 
         Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(1).getId());
-        Assertions.assertEquals(1, data.getRows().get(1).getFilters().size());
-        Assertions.assertTrue(data.getRows().get(1).getFilters().contains("us"));
-        Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(1).getValuesByColumnName().get("key"));
-        Assertions.assertEquals("200", data.getRows().get(1).getValuesByColumnName().get("value"));
+        Assertions.assertEquals(1, data.getRows().get(1).getViews().size());
+        Assertions.assertTrue(data.getRows().get(1).getViews().contains("US"));
+        Assertions.assertEquals("ITEM_QUANTITY", data.getRows().get(1).getValuesByColumnName().get("KEY"));
+        Assertions.assertEquals("200", data.getRows().get(1).getValuesByColumnName().get("VALUE"));
 
         Assertions.assertEquals("PAYMENT_URL", data.getRows().get(2).getId());
-        Assertions.assertEquals(2, data.getRows().get(2).getFilters().size());
-        Assertions.assertTrue(data.getRows().get(2).getFilters().contains("us"));
-        Assertions.assertTrue(data.getRows().get(2).getFilters().contains("test"));
-        Assertions.assertEquals("PAYMENT_URL", data.getRows().get(2).getValuesByColumnName().get("key"));
-        Assertions.assertEquals("http://test.malanik.eu", data.getRows().get(2).getValuesByColumnName().get("value"));
+        Assertions.assertEquals(2, data.getRows().get(2).getViews().size());
+        Assertions.assertTrue(data.getRows().get(2).getViews().contains("US"));
+        Assertions.assertTrue(data.getRows().get(2).getViews().contains("TEST"));
+        Assertions.assertEquals("PAYMENT_URL", data.getRows().get(2).getValuesByColumnName().get("KEY"));
+        Assertions.assertEquals("http://test.malanik.eu", data.getRows().get(2).getValuesByColumnName().get("VALUE"));
 
     }
 

@@ -37,7 +37,7 @@ public class ListMojo extends BaseMojo {
 
                 StringBuilder columns = new StringBuilder();
                 v.getColumnNames().forEach(c -> {
-                    columns.append(String.format(columnFormat, c.toUpperCase()));
+                    columns.append(String.format(columnFormat, c));
                 });
                 columns.append("|");
                 getLog().info(columns.toString());

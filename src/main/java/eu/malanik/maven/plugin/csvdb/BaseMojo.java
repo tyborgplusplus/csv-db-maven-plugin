@@ -9,6 +9,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,8 +43,8 @@ public abstract class BaseMojo extends AbstractMojo {
     @Parameter(property = "dbSchema")
     protected String dbSchema;
 
-    @Parameter(property = "filters")
-    protected Set<String> filters;
+    @Parameter(property = "views")
+    protected List<String> views;
 
     protected Map<String, TableData> prepareData() throws MojoExecutionException {
         getLog().info("Reading data from directory " + this.csvDirectory.getAbsolutePath());
@@ -52,7 +54,8 @@ public abstract class BaseMojo extends AbstractMojo {
         DatabaseConnector databaseConnector = new DatabaseConnector(this.dbUrl, this.dbUser, this.dbPassword, this.dbDriver, this.dbSchema);
 
         Map<String, Set<String>> primaryKeyColumnsByTableName = new HashMap<>(0);
-        if (!filters.isEmpty()) {
+        views.replaceAll(String::toUpperCase);
+        if (!views.isEmpty()) {
             try {
                 Set<String> tableNames = csvReader.extractTableNames();
                 getLog().info("Scanning for primary keys in tables " + tableNames);
@@ -64,9 +67,9 @@ public abstract class BaseMojo extends AbstractMojo {
             }
         }
 
-        Map<String, TableData> dataByTableName = new HashMap<>();
+        Map<String, TableData> dataByTableName;
         try {
-            dataByTableName = csvReader.readData(filters, primaryKeyColumnsByTableName);
+            dataByTableName = csvReader.readData(new HashSet<>(views), primaryKeyColumnsByTableName);
         } catch (IOException ex) {
             getLog().error(ex);
             throw new MojoExecutionException(ex.getMessage());

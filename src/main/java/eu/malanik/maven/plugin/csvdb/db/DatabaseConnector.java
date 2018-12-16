@@ -160,6 +160,13 @@ public class DatabaseConnector {
         throws SQLException {
         Map<String, Integer> columnTypeByName = new HashMap<>();
 
+        enrichColumnTypes(tableName.toLowerCase(), connection, columnTypeByName);
+        enrichColumnTypes(tableName.toUpperCase(), connection, columnTypeByName);
+
+        return columnTypeByName;
+    }
+
+    private void enrichColumnTypes(String tableName, Connection connection, Map<String, Integer> columnTypeByName) throws SQLException {
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
         ResultSetMetaData metaData = resultSet.getMetaData();
@@ -168,10 +175,8 @@ public class DatabaseConnector {
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i).toLowerCase();
             int columnType = metaData.getColumnType(i);
-            columnTypeByName.put(columnName, columnType);
+            columnTypeByName.put(columnName.toUpperCase(), columnType);
         }
-
-        return columnTypeByName;
     }
 
     private Connection createConnection() throws ClassNotFoundException, SQLException {
@@ -184,7 +189,7 @@ public class DatabaseConnector {
         ResultSet rs = meta.getPrimaryKeys(null, this.schema, tableName);
         while (rs.next()) {
             String primaryKeyColumn = rs.getString("COLUMN_NAME");
-            primaryKeyColumns.add(primaryKeyColumn.toLowerCase());
+            primaryKeyColumns.add(primaryKeyColumn.toUpperCase());
         }
         return primaryKeyColumns;
     }
