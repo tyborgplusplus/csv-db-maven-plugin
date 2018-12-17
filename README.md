@@ -53,6 +53,11 @@ Configuration
 | views  | no |  | List of views on csv files |
 
 
+Implementation details
+----------------
+- data types are determined from database columns
+- import will be done in 1 transaction
+
 Tested databases
 ----------------
 - PostgreSQL
@@ -101,5 +106,3 @@ First row in csv represents column names in table. For actual date or timestamp 
 
 
 ![Alt text](/doc/csv.png?raw=true "csv example")
-
-Data types are determined from database columns.
