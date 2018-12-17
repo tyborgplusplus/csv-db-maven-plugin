@@ -48,10 +48,6 @@ public class DatabaseConnector {
             throws Exception {
         Connection connection = this.createConnection();
 
-        if (this.schema != null) {
-            connection.setSchema(this.schema);
-        }
-
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
         DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern(timestampFormat).withZone(ZoneId.systemDefault());
 
@@ -129,6 +125,7 @@ public class DatabaseConnector {
                 statement.close();
             }
         }
+        connection.commit();
         connection.close();
     }
 
@@ -137,9 +134,6 @@ public class DatabaseConnector {
 
         Connection connection = this.createConnection();
 
-        if (this.schema != null) {
-            connection.setSchema(this.schema);
-        }
         DatabaseMetaData meta = connection.getMetaData();
 
         for (String tableName : tableNames) {
@@ -160,7 +154,9 @@ public class DatabaseConnector {
         throws SQLException {
         Map<String, Integer> columnTypeByName = new HashMap<>();
 
+        // some DB provider stores table meta data lower case (PostgreSQL)
         enrichColumnTypes(tableName.toLowerCase(), connection, columnTypeByName);
+        // and some upper case (H2)
         enrichColumnTypes(tableName.toUpperCase(), connection, columnTypeByName);
 
         return columnTypeByName;
@@ -181,7 +177,12 @@ public class DatabaseConnector {
 
     private Connection createConnection() throws ClassNotFoundException, SQLException {
         Class.forName(this.dbDriver);
-        return DriverManager.getConnection(this.url, this.user, this.password);
+        Connection connection = DriverManager.getConnection(this.url, this.user, this.password);
+        connection.setAutoCommit(false);
+        if (this.schema != null) {
+            connection.setSchema(this.schema);
+        }
+        return connection;
     }
 
     private Set<String> determinePrimaryKeyColumns(DatabaseMetaData meta, String tableName) throws SQLException {
