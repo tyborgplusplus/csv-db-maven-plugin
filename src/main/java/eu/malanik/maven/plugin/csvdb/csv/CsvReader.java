@@ -12,13 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CsvReader {
@@ -112,7 +106,8 @@ public class CsvReader {
                     if (existingRowViewImportance < fileRowViewImportance) {
                         tableData.getRows().remove(existingRow);
                     } else if (existingRowViewImportance == fileRowViewImportance) {
-                        log.warn("Same importance of " + existingRow + " vs. " + row);
+                        log.warn("Same views for " + existingRow + " and " + row + ". " + row + " will be used.");
+                        tableData.getRows().remove(existingRow);
                     }
                 }
 
