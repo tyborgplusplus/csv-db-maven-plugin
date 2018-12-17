@@ -57,6 +57,8 @@ Implementation details
 ----------------
 - data types are determined from database columns
 - import will be done in 1 transaction
+- first row in csv represents column names in table
+- use 'now' as value for import date / timestamp
 
 Tested databases
 ----------------
@@ -101,8 +103,5 @@ Example
 *configuration__eu_test.csv* overrides *configuration__eu.csv* which overrides *configuration.csv*
 
 Overriding is based on primary keys, which will be determined from target database.
-  
-First row in csv represents column names in table. For actual date or timestamp use 'now'.
-
-
+ 
 ![Alt text](/doc/csv.png?raw=true "csv example")
